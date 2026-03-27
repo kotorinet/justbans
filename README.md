@@ -170,13 +170,168 @@ presets:
 
 ---
 
-## 🧩 PlaceholderAPI
+## 📝 Placeholder Documentation
 
-| Placeholder | Description |
-|------------|-------------|
-| `%justbans_is_banned%` | Returns `Yes` or `No` |
-| `%justbans_is_muted%` | Returns `Yes` or `No` |
-| `%justbans_active_bans%` | Total number of active bans |
+### 🔹 Message Placeholders (messages.yml)
+
+These placeholders are used in `messages.yml` and are automatically replaced by the plugin:
+
+#### **Punishment Information**
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `<id>` | Punishment ID number | `#1234` |
+| `<player>` | Target player's name | `Notch` |
+| `<uuid>` | Player's UUID | `069a79f4-44e9-4726-a5be-fca90e38aaf5` |
+| `<reason>` | Punishment reason | `Cheating` |
+| `<staff>` | Staff member who issued punishment | `Admin` |
+| `<type>` | Punishment type | `BAN`, `MUTE`, `WARN`, `KICK` |
+| `<duration>` | Time remaining or duration | `7 days, 3 hours`, `Permanent` |
+| `<date>` | Date punishment was issued | `15.03.2026 14:30:00` |
+| `<status>` | Punishment status | `Active`, `Inactive`, `Expired` |
+
+#### **Player Information**
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `<last_seen>` | Last time player was online | `15.03.2026 14:30:00` |
+| `<last_ip>` | Player's last known IP address | `127.0.0.1` or `[Hidden]` |
+| `<account_name>` | Alt account name (for ban evasion) | `Notch_Alt` |
+| `<banned_account>` | Original banned account | `Notch` |
+
+#### **System & Navigation**
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `<server_name>` | Server name from config | `My Minecraft Server` |
+| `<discord_invite>` | Discord invite link from config | `discord.gg/example` |
+| `<page>` | Current GUI page number | `1` |
+| `<max_pages>` | Total pages in GUI | `5` |
+| `<usage>` | Command usage syntax | `/ban <player> <reason>` |
+| `<preset>` | Preset name | `CHEATING` |
+| `<message>` | Generic message content | varies |
+
+#### **Status & Metadata**
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `<version>` | Plugin version | `1.2.4` |
+| `<author>` | Plugin author | `kotori` |
+| `<current_version>` | Current installed version | `1.2.3` |
+| `<latest_version>` | Latest available version | `1.2.4` |
+| `<db_status>` | Database connection status | `Connected` |
+| `<db_ping>` | Database ping in ms | `5` |
+| `<net_status>` | Network sync status | `Enabled` |
+| `<command>` | Command name | `/ban` |
+| `<description>` | Command description | `Bans a player` |
+
+#### **GUI Specific**
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `<note_text>` | Note content | `Player warned for spam` |
+
+---
+
+### 🔹 PlaceholderAPI Integration
+
+**Requires:** [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+
+Use these placeholders in **any** plugin that supports PlaceholderAPI (scoreboard, tab list, chat plugins, etc.):
+
+#### **Status Checks**
+| Placeholder | Description | Returns |
+|------------|-------------|----------|
+| `%justbans_is_banned%` | Check if player is currently banned | `Yes` or `No` |
+| `%justbans_is_muted%` | Check if player is currently muted | `Yes` or `No` |
+| `%justbans_active_bans%` | Total number of active bans on server | `42` |
+
+#### **Ban Information**
+| Placeholder | Description | Returns |
+|------------|-------------|----------|
+| `%justbans_ban_id%` | Active ban punishment ID | `1234` or `N/A` |
+| `%justbans_ban_reason%` | Reason for active ban | `Hacking` or `N/A` |
+| `%justbans_ban_staff%` | Staff who issued the ban | `Admin` or `N/A` |
+| `%justbans_ban_date%` | Date when banned | `15.03.2026 14:30:00` or `N/A` |
+| `%justbans_ban_expiry%` | Ban expiration date | `22.03.2026 14:30:00`, `Permanent`, or `N/A` |
+| `%justbans_ban_expire_date%` | Alias for ban_expiry | Same as above |
+| `%justbans_ban_duration%` | Time remaining on ban | `7 days, 3 hours`, `Permanent`, or `N/A` |
+
+#### **Mute Information**
+| Placeholder | Description | Returns |
+|------------|-------------|----------|
+| `%justbans_mute_id%` | Active mute punishment ID | `1235` or `N/A` |
+| `%justbans_mute_reason%` | Reason for active mute | `Spamming` or `N/A` |
+| `%justbans_mute_staff%` | Staff who issued the mute | `Moderator` or `N/A` |
+| `%justbans_mute_date%` | Date when muted | `15.03.2026 14:30:00` or `N/A` |
+| `%justbans_mute_expiry%` | Mute expiration date | `15.03.2026 16:30:00`, `Permanent`, or `N/A` |
+| `%justbans_mute_expire_date%` | Alias for mute_expiry | Same as above |
+| `%justbans_mute_duration%` | Time remaining on mute | `2 hours, 15 minutes`, `Permanent`, or `N/A` |
+
+**Example Usage:**
+```yaml
+# In DeluxeMenus - Ban Info GUI
+ban_info:
+  material: BARRIER
+  display_name: "&cBan Information"
+  lore:
+    - "&7Banned: %justbans_is_banned%"
+    - "&7Ban ID: &c#%justbans_ban_id%"
+    - "&7Reason: &f%justbans_ban_reason%"
+    - "&7Banned by: &e%justbans_ban_staff%"
+    - "&7Banned on: &f%justbans_ban_date%"
+    - "&7Expires: &f%justbans_ban_expiry%"
+    - "&7Time remaining: &a%justbans_ban_duration%"
+
+# In TAB plugin - Scoreboard
+scoreboard:
+  lines:
+    - "&cBanned: %justbans_is_banned%"
+    - "&6Muted: %justbans_is_muted%"
+    - "&7Active Bans: %justbans_active_bans%"
+```
+
+---
+
+### 🔹 Discord Webhook Placeholders
+
+**Location:** `webhooks.yml` templates
+
+These placeholders use `{curly_braces}` instead of `<angle_brackets>`:
+
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `{id}` | Punishment ID | `1234` |
+| `{player}` | Target player name | `Notch` |
+| `{staff}` | Staff member name | `Admin` |
+| `{reason}` | Punishment reason | `Hacking` |
+| `{duration}` | Punishment duration | `7 days`, `Permanent` |
+| `{type}` | Punishment type | `BAN`, `MUTE` |
+| `{server}` | Server ID from config | `survival` |
+
+**Example:**
+```yaml
+templates:
+  punish:
+    title: "[{server}] New {type}"
+    footer: "Punishment ID: #{id}"
+```
+
+---
+
+### 🎨 MiniMessage Format Support
+
+All message placeholders support [MiniMessage](https://docs.advntr.dev/minimessage/format.html) formatting:
+
+```yaml
+# Gradients
+ban_screen:
+  - "<gradient:#FF0000:#00FF00>You are banned!</gradient>"
+
+# Hover text
+mute_message: "<hover:show_text:'Muted by <staff>'>You are muted</hover>"
+
+# Click actions
+help_text: "<click:open_url:'https://example.com'>Click for appeal</click>"
+
+# Colors
+broadcast_ban: "<red><player></red> was banned by <green><staff></green>"
+```
 
 ---
 
